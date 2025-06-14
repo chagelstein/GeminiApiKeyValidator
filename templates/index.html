@@ -192,12 +192,36 @@
                                                     <code>{{ model.input_token_limit }}</code>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="row mb-3">
                                                 <div class="col-sm-4 fw-bold">Output Token Limit:</div>
                                                 <div class="col-sm-8">
                                                     <code>{{ model.output_token_limit }}</code>
                                                 </div>
                                             </div>
+                                            {% if 'generateContent' in model.supported_methods %}
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="alert alert-info mb-0">
+                                                        <h6 class="mb-2"><i class="fas fa-code me-2"></i>How to use this model:</h6>
+                                                        <pre class="mb-2 small"><code>import google.generativeai as genai
+
+genai.configure(api_key="your_api_key_here")
+model = genai.GenerativeModel("{{ model.name }}")
+response = model.generate_content("Your prompt here")
+print(response.text)</code></pre>
+                                                        <button class="btn btn-sm btn-outline-light copy-btn" 
+                                                                data-copy='import google.generativeai as genai
+
+genai.configure(api_key="your_api_key_here")
+model = genai.GenerativeModel("{{ model.name }}")
+response = model.generate_content("Your prompt here")
+print(response.text)'>
+                                                            <i class="fas fa-copy me-1"></i>Copy Code
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -313,6 +337,29 @@
                                         <strong>Network Error:</strong> Check internet connectivity
                                     </li>
                                 </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-cogs me-2"></i>
+                                    Using Different Models
+                                </h6>
+                                <div class="alert alert-info">
+                                    <p class="mb-3">Your API key works with all available models. To use a specific model:</p>
+                                    <ol class="mb-3">
+                                        <li><strong>Test your API key above</strong> to see all available models</li>
+                                        <li><strong>Choose a model</strong> from the "Available Models" section</li>
+                                        <li><strong>Copy the code snippet</strong> provided for that model</li>
+                                        <li><strong>Replace "your_api_key_here"</strong> with your actual API key</li>
+                                        <li><strong>Customize the prompt</strong> for your specific use case</li>
+                                    </ol>
+                                    <p class="mb-0">
+                                        <strong>Note:</strong> You don't need to "configure" your API key for specific models. 
+                                        The same key works with all models you have access to - you just specify which model to use in your code.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
