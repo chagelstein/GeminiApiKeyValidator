@@ -99,6 +99,23 @@ Changelog:
 - June 14, 2025. Implemented intelligent model selection for API testing using popularity-based priority (gemini-1.5-pro, gemini-1.5-flash, gemini-pro, etc.). Added visual indicators for popular/recommended models in the interface.
 ```
 
+## Backup & Safety
+
+### File Protection
+- All files are automatically saved in Replit's cloud infrastructure
+- Project persists across sessions and devices
+- No manual saving required
+
+### Recommended Backup Options
+1. **Git Integration**: Connect to GitHub for version control and external backup
+2. **Download ZIP**: Use Replit's download feature for local backups
+3. **Project Forking**: Create duplicate copies within Replit
+
+### Project Status
+- Application successfully deployed and tested
+- Rate limiting issues resolved with gemini-1.5-flash prioritization
+- All core functionality working as expected
+
 ## User Preferences
 
 ```
