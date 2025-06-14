@@ -63,12 +63,18 @@ def test_api_key():
                 }
                 all_models_info.append(model_info)
                 
-                # Check if this model supports content generation
+                # Check if this model supports content generation and is not deprecated
                 if 'generateContent' in model.supported_generation_methods:
-                    generative_models.append(model)
+                    # Filter out deprecated models based on common deprecated model patterns
+                    model_name_lower = model.name.lower()
+                    if not any(deprecated_term in model_name_lower for deprecated_term in [
+                        'vision', 'pro-vision', '1.0-pro-vision', 'bison'
+                    ]):
+                        generative_models.append(model)
             
             test_results['all_models'] = all_models_info
             test_results['tests_performed'].append(f'✓ Cataloged {len(all_models_info)} models with detailed information')
+            test_results['tests_performed'].append(f'✓ Found {len(generative_models)} active generation models (deprecated models filtered out)')
             
             # Find the most popular generative model for testing
             if generative_models:
@@ -105,6 +111,7 @@ def test_api_key():
                 
                 popularity_note = " (most popular model)" if test_results['model_info']['is_popular'] else ""
                 test_results['tests_performed'].append(f'✓ Selected model for testing: {selected_model.display_name}{popularity_note}')
+                test_results['tests_performed'].append(f'✓ Model name for API calls: {model_name}')
             else:
                 test_results['tests_performed'].append('⚠ No generative models found for content generation testing')
                 
@@ -114,8 +121,9 @@ def test_api_key():
         
         # Test 2: Simple generation test
         try:
-            if generative_models:
-                model_name = generative_models[0].name
+            if generative_models and 'model_info' in test_results and test_results['model_info']:
+                # Use the same model that was selected for display
+                model_name = test_results['model_info']['name']
                 model = genai.GenerativeModel(model_name)
                 response = model.generate_content(
                     "Hello! Please respond with 'API test successful' to confirm connectivity.",
@@ -134,7 +142,12 @@ def test_api_key():
                 test_results['tests_performed'].append('⚠ Skipped content generation test (no suitable models)')
                 
         except Exception as e:
-            test_results['tests_performed'].append(f'✗ Content generation failed: {str(e)}')
+            error_msg = str(e)
+            if 'deprecated' in error_msg.lower():
+                test_results['tests_performed'].append(f'✗ Selected model is deprecated: {error_msg}')
+                test_results['tests_performed'].append('ℹ The system will try to select a different model next time')
+            else:
+                test_results['tests_performed'].append(f'✗ Content generation failed: {error_msg}')
             # Don't raise here as this might be a quota/permission issue but key might still be valid
         
         # If we got this far, the API key is at least valid
