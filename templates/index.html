@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini API Key Tester</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-key text-info me-3"></i>
+                        Gemini API Key Tester
+                    </h1>
+                    <p class="lead text-muted">
+                        Test your Google Gemini API key connectivity and get detailed diagnostic information
+                    </p>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- API Key Testing Form -->
+                <div class="card border-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-vial me-2"></i>
+                            Test API Key
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('test_api_key') }}" id="testForm">
+                            <div class="mb-4">
+                                <label for="api_key" class="form-label">
+                                    <i class="fas fa-key me-2"></i>
+                                    Gemini API Key
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" 
+                                           class="form-control form-control-lg" 
+                                           id="api_key" 
+                                           name="api_key" 
+                                           placeholder="Enter your Gemini API key..." 
+                                           required>
+                                    <button class="btn btn-outline-secondary" 
+                                            type="button" 
+                                            id="togglePassword"
+                                            title="Toggle password visibility">
+                                        <i class="fas fa-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Your API key is not stored and is only used for testing connectivity.
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="testButton">
+                                    <i class="fas fa-play me-2"></i>
+                                    <span id="buttonText">Test API Key</span>
+                                    <span id="buttonSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Test Results -->
+                {% if test_results %}
+                <div class="card border-secondary mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-{{ 'check-circle text-success' if test_results.success else 'times-circle text-danger' }} me-2"></i>
+                            Test Results
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- API Key Info -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                API Key Information
+                            </h5>
+                            <div class="bg-dark border rounded p-3">
+                                <div class="row">
+                                    <div class="col-sm-3 fw-bold">API Key:</div>
+                                    <div class="col-sm-9">
+                                        <code>{{ test_results.api_key_masked }}</code>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-sm-3 fw-bold">Status:</div>
+                                    <div class="col-sm-9">
+                                        {% if test_results.success %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Valid
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Invalid
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tests Performed -->
+                        {% if test_results.tests_performed %}
+                        <div class="mb-4">
+                            <h5 class="mb-3">
+                                <i class="fas fa-list-check me-2"></i>
+                                Tests Performed
+                            </h5>
+                            <div class="bg-dark border rounded p-3">
+                                {% for test in test_results.tests_performed %}
+                                <div class="mb-2 font-monospace">
+                                    {{ test }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Model Information -->
+                        {% if test_results.model_info %}
+                        <div class="mb-4">
+                            <h5 class="mb-3">
+                                <i class="fas fa-robot me-2"></i>
+                                Model Information
+                            </h5>
+                            <div class="bg-dark border rounded p-3">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3 fw-bold">Name:</div>
+                                    <div class="col-sm-9">
+                                        <code>{{ test_results.model_info.name }}</code>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-sm-3 fw-bold">Display Name:</div>
+                                    <div class="col-sm-9">{{ test_results.model_info.display_name }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 fw-bold">Description:</div>
+                                    <div class="col-sm-9">{{ test_results.model_info.description }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Error Message -->
+                        {% if test_results.error_message %}
+                        <div class="mb-4">
+                            <h5 class="mb-3 text-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Error Details
+                            </h5>
+                            <div class="alert alert-danger">
+                                <pre class="mb-0 text-wrap">{{ test_results.error_message }}</pre>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Action Buttons -->
+                        <div class="text-center">
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                                <i class="fas fa-redo me-2"></i>
+                                Test Another Key
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Help Section -->
+                <div class="card border-secondary mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Help & Troubleshooting
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-key me-2"></i>
+                                    Getting Your API Key
+                                </h6>
+                                <ol class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="fas fa-arrow-right me-2 text-info"></i>
+                                        Visit <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-decoration-none">Google AI Studio</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-arrow-right me-2 text-info"></i>
+                                        Sign in with your Google account
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-arrow-right me-2 text-info"></i>
+                                        Create or select an API key
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-arrow-right me-2 text-info"></i>
+                                        Copy the key and paste it above
+                                    </li>
+                                </ol>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Common Issues
+                                </h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="fas fa-dot-circle me-2 text-warning"></i>
+                                        <strong>Invalid API Key:</strong> Double-check the key format
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-dot-circle me-2 text-warning"></i>
+                                        <strong>Permission Denied:</strong> Ensure API access is enabled
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-dot-circle me-2 text-warning"></i>
+                                        <strong>Quota Exceeded:</strong> Check your usage limits
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-dot-circle me-2 text-warning"></i>
+                                        <strong>Network Error:</strong> Check internet connectivity
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
