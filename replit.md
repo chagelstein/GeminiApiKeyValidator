@@ -96,6 +96,7 @@ This is a Flask-based web application designed to test and validate Google Gemin
 Changelog:
 - June 14, 2025. Initial setup
 - June 14, 2025. Enhanced API testing to list all available models with detailed information including supported methods, token limits, and descriptions. Added collapsible accordion interface to display models in an organized manner.
+- June 14, 2025. Implemented intelligent model selection for API testing using popularity-based priority (gemini-1.5-pro, gemini-1.5-flash, gemini-pro, etc.). Added visual indicators for popular/recommended models in the interface.
 ```
 
 ## User Preferences

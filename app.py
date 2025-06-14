@@ -70,15 +70,41 @@ def test_api_key():
             test_results['all_models'] = all_models_info
             test_results['tests_performed'].append(f'✓ Cataloged {len(all_models_info)} models with detailed information')
             
-            # Find a suitable generative model for testing
+            # Find the most popular generative model for testing
             if generative_models:
-                model_name = generative_models[0].name
+                # Define model priority based on popularity and capabilities
+                model_priority = [
+                    'gemini-1.5-pro',
+                    'gemini-1.5-flash',
+                    'gemini-pro',
+                    'gemini-1.0-pro',
+                    'gemini-pro-vision'
+                ]
+                
+                # Find the highest priority model available
+                selected_model = None
+                for priority_model in model_priority:
+                    for model in generative_models:
+                        if priority_model in model.name.lower():
+                            selected_model = model
+                            break
+                    if selected_model:
+                        break
+                
+                # If no priority model found, use the first available
+                if not selected_model:
+                    selected_model = generative_models[0]
+                
+                model_name = selected_model.name
                 test_results['model_info'] = {
                     'name': model_name,
-                    'display_name': generative_models[0].display_name,
-                    'description': getattr(generative_models[0], 'description', 'No description available')
+                    'display_name': selected_model.display_name,
+                    'description': getattr(selected_model, 'description', 'No description available'),
+                    'is_popular': any(priority in selected_model.name.lower() for priority in model_priority)
                 }
-                test_results['tests_performed'].append(f'✓ Selected model for testing: {generative_models[0].display_name}')
+                
+                popularity_note = " (most popular model)" if test_results['model_info']['is_popular'] else ""
+                test_results['tests_performed'].append(f'✓ Selected model for testing: {selected_model.display_name}{popularity_note}')
             else:
                 test_results['tests_performed'].append('⚠ No generative models found for content generation testing')
                 

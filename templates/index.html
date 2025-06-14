@@ -145,6 +145,11 @@
                             <h5 class="mb-3">
                                 <i class="fas fa-robot me-2"></i>
                                 Test Model Used
+                                {% if test_results.model_info.is_popular %}
+                                    <span class="badge bg-warning text-dark ms-2">
+                                        <i class="fas fa-star me-1"></i>Most Popular
+                                    </span>
+                                {% endif %}
                             </h5>
                             <div class="bg-dark border rounded p-3">
                                 <div class="row mb-2">
@@ -155,7 +160,12 @@
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-sm-3 fw-bold">Display Name:</div>
-                                    <div class="col-sm-9">{{ test_results.model_info.display_name }}</div>
+                                    <div class="col-sm-9">
+                                        {{ test_results.model_info.display_name }}
+                                        {% if test_results.model_info.is_popular %}
+                                            <span class="badge bg-success ms-2">Recommended</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3 fw-bold">Description:</div>
