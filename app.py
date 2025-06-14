@@ -78,13 +78,13 @@ def test_api_key():
             
             # Find the most popular generative model for testing
             if generative_models:
-                # Define model priority based on popularity and capabilities
+                # Define model priority based on free tier limits and capabilities
+                # gemini-1.5-flash has higher free tier limits than gemini-1.5-pro
                 model_priority = [
-                    'gemini-1.5-pro',
                     'gemini-1.5-flash',
+                    'gemini-1.5-pro', 
                     'gemini-pro',
-                    'gemini-1.0-pro',
-                    'gemini-pro-vision'
+                    'gemini-1.0-pro'
                 ]
                 
                 # Find the highest priority model available
@@ -163,8 +163,11 @@ def test_api_key():
             flash('Invalid API key. Please check your key and try again.', 'error')
         elif 'PERMISSION_DENIED' in error_msg:
             flash('Permission denied. Please check if your API key has the required permissions.', 'error')
-        elif 'QUOTA_EXCEEDED' in error_msg:
-            flash('API quota exceeded. Please check your usage limits.', 'error')
+        elif 'QUOTA_EXCEEDED' in error_msg or 'quota_metric' in error_msg.lower():
+            if 'free_tier' in error_msg.lower():
+                flash('Free tier quota exceeded. Consider upgrading to a paid plan or try again later. You can also try using gemini-1.5-flash which has higher free tier limits.', 'error')
+            else:
+                flash('API quota exceeded. Please check your usage limits.', 'error')
         elif 'timeout' in error_msg.lower() or 'connection' in error_msg.lower():
             flash('Network error. Please check your internet connection and try again.', 'error')
         else:

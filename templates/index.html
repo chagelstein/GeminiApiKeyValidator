@@ -340,7 +340,7 @@ print(response.text)'>
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-dot-circle me-2 text-warning"></i>
-                                        <strong>Quota Exceeded:</strong> Check your usage limits
+                                        <strong>Quota Exceeded:</strong> You've hit free tier limits - wait or upgrade
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-dot-circle me-2 text-warning"></i>
@@ -368,6 +368,31 @@ print(response.text)'>
                                     <p class="mb-0">
                                         <strong>Note:</strong> You don't need to "configure" your API key for specific models. 
                                         The same key works with all models you have access to - you just specify which model to use in your code.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-clock me-2"></i>
+                                    Rate Limits & Quota Issues
+                                </h6>
+                                <div class="alert alert-warning">
+                                    <p class="mb-3"><strong>If you see quota exceeded errors:</strong></p>
+                                    <ul class="mb-3">
+                                        <li><strong>Free Tier Limits:</strong> You've hit daily/minute request limits</li>
+                                        <li><strong>Wait:</strong> Try again after the suggested retry delay (usually 1-2 minutes)</li>
+                                        <li><strong>Use Different Model:</strong> gemini-1.5-flash has higher free tier limits than gemini-1.5-pro</li>
+                                        <li><strong>Upgrade:</strong> Consider a paid plan for higher limits</li>
+                                    </ul>
+                                    <p class="mb-0">
+                                        <strong>Free Tier Typical Limits:</strong> 15 requests/minute, 1,500 requests/day, 1M tokens/minute
+                                        <br>
+                                        <a href="https://ai.google.dev/gemini-api/docs/rate-limits" target="_blank" class="text-decoration-none">
+                                            <i class="fas fa-external-link-alt me-1"></i>View current rate limits
+                                        </a>
                                     </p>
                                 </div>
                             </div>
