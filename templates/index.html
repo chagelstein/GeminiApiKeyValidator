@@ -139,6 +139,32 @@
                         </div>
                         {% endif %}
 
+                        <!-- Test Model Used -->
+                        {% if test_results.model_info %}
+                        <div class="mb-4">
+                            <h5 class="mb-3">
+                                <i class="fas fa-robot me-2"></i>
+                                Test Model Used
+                            </h5>
+                            <div class="bg-dark border rounded p-3">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3 fw-bold">Name:</div>
+                                    <div class="col-sm-9">
+                                        <code>{{ test_results.model_info.name }}</code>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-sm-3 fw-bold">Display Name:</div>
+                                    <div class="col-sm-9">{{ test_results.model_info.display_name }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 fw-bold">Description:</div>
+                                    <div class="col-sm-9">{{ test_results.model_info.description }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
                         <!-- Available Models -->
                         {% if test_results.all_models %}
                         <div class="mb-4">
@@ -226,32 +252,6 @@ print(response.text)'>
                                     </div>
                                 </div>
                                 {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <!-- Test Model Information -->
-                        {% if test_results.model_info %}
-                        <div class="mb-4">
-                            <h5 class="mb-3">
-                                <i class="fas fa-robot me-2"></i>
-                                Test Model Used
-                            </h5>
-                            <div class="bg-dark border rounded p-3">
-                                <div class="row mb-2">
-                                    <div class="col-sm-3 fw-bold">Name:</div>
-                                    <div class="col-sm-9">
-                                        <code>{{ test_results.model_info.name }}</code>
-                                    </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-3 fw-bold">Display Name:</div>
-                                    <div class="col-sm-9">{{ test_results.model_info.display_name }}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-3 fw-bold">Description:</div>
-                                    <div class="col-sm-9">{{ test_results.model_info.description }}</div>
-                                </div>
                             </div>
                         </div>
                         {% endif %}
