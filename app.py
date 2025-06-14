@@ -34,7 +34,8 @@ def test_api_key():
         'api_key_masked': mask_api_key(api_key),
         'tests_performed': [],
         'error_message': None,
-        'model_info': None
+        'model_info': None,
+        'all_models': []
     }
     
     try:
@@ -47,8 +48,29 @@ def test_api_key():
             models = list(genai.list_models())
             test_results['tests_performed'].append(f'✓ Successfully retrieved {len(models)} available models')
             
-            # Find a suitable generative model
-            generative_models = [m for m in models if 'generateContent' in m.supported_generation_methods]
+            # Store all models information
+            all_models_info = []
+            generative_models = []
+            
+            for model in models:
+                model_info = {
+                    'name': model.name,
+                    'display_name': model.display_name,
+                    'description': getattr(model, 'description', 'No description available'),
+                    'supported_methods': model.supported_generation_methods,
+                    'input_token_limit': getattr(model, 'input_token_limit', 'Not specified'),
+                    'output_token_limit': getattr(model, 'output_token_limit', 'Not specified')
+                }
+                all_models_info.append(model_info)
+                
+                # Check if this model supports content generation
+                if 'generateContent' in model.supported_generation_methods:
+                    generative_models.append(model)
+            
+            test_results['all_models'] = all_models_info
+            test_results['tests_performed'].append(f'✓ Cataloged {len(all_models_info)} models with detailed information')
+            
+            # Find a suitable generative model for testing
             if generative_models:
                 model_name = generative_models[0].name
                 test_results['model_info'] = {
@@ -56,9 +78,9 @@ def test_api_key():
                     'display_name': generative_models[0].display_name,
                     'description': getattr(generative_models[0], 'description', 'No description available')
                 }
-                test_results['tests_performed'].append(f'✓ Found suitable model: {generative_models[0].display_name}')
+                test_results['tests_performed'].append(f'✓ Selected model for testing: {generative_models[0].display_name}')
             else:
-                test_results['tests_performed'].append('⚠ No generative models found')
+                test_results['tests_performed'].append('⚠ No generative models found for content generation testing')
                 
         except Exception as e:
             test_results['tests_performed'].append(f'✗ Failed to list models: {str(e)}')
@@ -67,6 +89,7 @@ def test_api_key():
         # Test 2: Simple generation test
         try:
             if generative_models:
+                model_name = generative_models[0].name
                 model = genai.GenerativeModel(model_name)
                 response = model.generate_content(
                     "Hello! Please respond with 'API test successful' to confirm connectivity.",

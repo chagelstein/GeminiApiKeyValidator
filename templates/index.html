@@ -19,7 +19,7 @@
                         Gemini API Key Tester
                     </h1>
                     <p class="lead text-muted">
-                        Test your Google Gemini API key connectivity and get detailed diagnostic information
+                        Test your Google Gemini API key connectivity and get detailed diagnostic information and models the key has access to
                     </p>
                 </div>
 
@@ -139,12 +139,79 @@
                         </div>
                         {% endif %}
 
-                        <!-- Model Information -->
+                        <!-- Available Models -->
+                        {% if test_results.all_models %}
+                        <div class="mb-4">
+                            <h5 class="mb-3">
+                                <i class="fas fa-layer-group me-2"></i>
+                                Available Models ({{ test_results.all_models|length }})
+                            </h5>
+                            <div class="accordion" id="modelsAccordion">
+                                {% for model in test_results.all_models %}
+                                <div class="accordion-item bg-dark border-secondary">
+                                    <h2 class="accordion-header" id="heading{{ loop.index }}">
+                                        <button class="accordion-button collapsed bg-dark text-light border-0" type="button" 
+                                                data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" 
+                                                aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                                            <i class="fas fa-robot me-2"></i>
+                                            <strong>{{ model.display_name }}</strong>
+                                            <span class="ms-2">
+                                                {% if 'generateContent' in model.supported_methods %}
+                                                    <span class="badge bg-success ms-2">Generation</span>
+                                                {% endif %}
+                                                {% if 'embedContent' in model.supported_methods %}
+                                                    <span class="badge bg-info ms-1">Embedding</span>
+                                                {% endif %}
+                                            </span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" 
+                                         aria-labelledby="heading{{ loop.index }}" data-bs-parent="#modelsAccordion">
+                                        <div class="accordion-body bg-dark">
+                                            <div class="row mb-2">
+                                                <div class="col-sm-4 fw-bold">Model Name:</div>
+                                                <div class="col-sm-8">
+                                                    <code class="text-info">{{ model.name }}</code>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-sm-4 fw-bold">Description:</div>
+                                                <div class="col-sm-8">{{ model.description }}</div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-sm-4 fw-bold">Supported Methods:</div>
+                                                <div class="col-sm-8">
+                                                    {% for method in model.supported_methods %}
+                                                        <span class="badge bg-secondary me-1">{{ method }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-sm-4 fw-bold">Input Token Limit:</div>
+                                                <div class="col-sm-8">
+                                                    <code>{{ model.input_token_limit }}</code>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-4 fw-bold">Output Token Limit:</div>
+                                                <div class="col-sm-8">
+                                                    <code>{{ model.output_token_limit }}</code>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Test Model Information -->
                         {% if test_results.model_info %}
                         <div class="mb-4">
                             <h5 class="mb-3">
                                 <i class="fas fa-robot me-2"></i>
-                                Model Information
+                                Test Model Used
                             </h5>
                             <div class="bg-dark border rounded p-3">
                                 <div class="row mb-2">
