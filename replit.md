@@ -97,6 +97,7 @@ Changelog:
 - June 14, 2025. Initial setup
 - June 14, 2025. Enhanced API testing to list all available models with detailed information including supported methods, token limits, and descriptions. Added collapsible accordion interface to display models in an organized manner.
 - June 14, 2025. Implemented intelligent model selection for API testing using popularity-based priority (gemini-1.5-pro, gemini-1.5-flash, gemini-pro, etc.). Added visual indicators for popular/recommended models in the interface.
+- June 17, 2025. Redesigned model display to show only top 10 most recent models in descending order with total model count information. Improved user experience by focusing on latest available models.
 ```
 
 ## Backup & Safety

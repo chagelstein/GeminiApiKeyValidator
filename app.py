@@ -48,7 +48,7 @@ def test_api_key():
             models = list(genai.list_models())
             test_results['tests_performed'].append(f'✓ Successfully retrieved {len(models)} available models')
             
-            # Store all models information
+            # Store all models information and sort by name (most recent models typically have higher version numbers)
             all_models_info = []
             generative_models = []
             
@@ -72,7 +72,12 @@ def test_api_key():
                     ]):
                         generative_models.append(model)
             
-            test_results['all_models'] = all_models_info
+            # Sort models by name in descending order (newer models typically have higher version numbers)
+            all_models_info.sort(key=lambda x: x['name'], reverse=True)
+            
+            # Store total count and top 10 most recent models
+            test_results['total_models_count'] = len(all_models_info)
+            test_results['all_models'] = all_models_info[:10]  # Only top 10 most recent
             test_results['tests_performed'].append(f'✓ Cataloged {len(all_models_info)} models with detailed information')
             test_results['tests_performed'].append(f'✓ Found {len(generative_models)} active generation models (deprecated models filtered out)')
             
