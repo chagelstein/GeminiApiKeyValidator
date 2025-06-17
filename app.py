@@ -80,6 +80,7 @@ def test_api_key():
             test_results['all_models'] = all_models_info[:10]  # Only top 10 most recent
             test_results['tests_performed'].append(f'✓ Cataloged {len(all_models_info)} models with detailed information')
             test_results['tests_performed'].append(f'✓ Found {len(generative_models)} active generation models (deprecated models filtered out)')
+            test_results['tests_performed'].append('✓ Showing Top 10 Most Recent Models only')
             
             # Find the most popular generative model for testing
             if generative_models:
